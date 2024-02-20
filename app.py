@@ -1,5 +1,4 @@
-# AKIAYS2NP6XHDHLHTKC3
-# dx2f7KHfjz9d5jrFkXXaO0fUaaXPjjtO4mgvvHa7
+# ap-south-1
 # python.sa2li7
 
 from flask import Flask, render_template, request, redirect, url_for
@@ -8,8 +7,8 @@ import boto3
 app = Flask(__name__)
 
 # AWS credentials
-AWS_ACCESS_KEY_ID = 'AKIAYS2NP6XHDHLHTKC3'
-AWS_SECRET_ACCESS_KEY = 'dx2f7KHfjz9d5jrFkXXaO0fUaaXPjjtO4mgvvHa7'
+AWS_ACCESS_KEY_ID = 'your_access_key'
+AWS_SECRET_ACCESS_KEY = 'your_secret_key'
 AWS_REGION = 'ap-south-1'
 
 # Initialize S3 client
