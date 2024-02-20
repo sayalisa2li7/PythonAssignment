@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objects in {{ bucket_name }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Objects in {{ bucket_name }}</h1>
+        <form action="/upload_file/{{ bucket_name }}" method="post" enctype="multipart/form-data" class="mb-4">
+            <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" name="file" class="custom-file-input" id="inputGroupFile">
+                    <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Upload File</button>
+                </div>
+            </div>
+        </form>
+        <ul class="list-group">
+            {% for object in objects %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ object }}
+                    <div>
+                        <a href="/delete_file/{{ bucket_name }}/{{ object }}" class="btn btn-danger btn-sm mr-2">Delete</a>
+                        <a href="/copy_file/{{ bucket_name }}/{{ object }}/copy_of_{{ object }}" class="btn btn-secondary btn-sm mr-2">Copy</a>
+                        <a href="/move_file/{{ bucket_name }}/{{ object }}/moved_{{ object }}" class="btn btn-secondary btn-sm">Move</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
