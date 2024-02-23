@@ -1,16 +1,16 @@
-# AKIAYS2NP6XHDHLHTKC3
-# dx2f7KHfjz9d5jrFkXXaO0fUaaXPjjtO4mgvvHa7
-# python.sa2li7
-
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
 import boto3
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 
 # AWS credentials
-AWS_ACCESS_KEY_ID = 'AKIAYS2NP6XHDHLHTKC3'
-AWS_SECRET_ACCESS_KEY = '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'
-#AWS_REGION = 'ap-south-1'
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# AWS_REGION = 'ap-south-1'
 
 # Initialize S3 client
 s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID,
@@ -74,5 +74,5 @@ def move_file(bucket_name, source, destination):
     return redirect(url_for('list_objects', bucket_name=bucket_name))
 
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
