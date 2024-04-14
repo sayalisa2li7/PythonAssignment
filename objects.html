@@ -6,33 +6,121 @@
     <title>Objects in {{ bucket_name }}</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .alert {
+        margin-bottom: 10px;
+        }
+
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Objects in {{ bucket_name }}</h1>
-        <form action="/upload_file/{{ bucket_name }}" method="post" enctype="multipart/form-data" class="mb-4">
-            <div class="input-group">
-                <div class="custom-file">
-                    <input type="file" name="file" class="custom-file-input" id="inputGroupFile">
-                    <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+
+        <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info" role="alert">
+                    {{ message }}
                 </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    </div>
+
+
+        <form action="{{ url_for('create_folder', bucket_name=bucket_name) }}" method="post" class="mt-4">
+            <div class="input-group">
+                <label>
+                    <input type="text" name="folder_name" class="form-control" placeholder="Enter Folder Name" required>
+                </label>
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary">Upload File</button>
+                    <button type="submit" class="btn btn-success">Create Folder</button>
                 </div>
             </div>
         </form>
+
+        <form action="{{ url_for('delete_folder', bucket_name=bucket_name) }}" method="post" class="mt-4">
+            <div class="input-group">
+                <label>
+                    <select name="folder_name" class="custom-select" required>
+                        <option value="" selected>Select Folder to Delete</option>
+                        {% for object in objects %}
+                            {% if '/' in object %}
+                                <option value="{{ object.split('/')[0] }}">{{ object.split('/')[0] }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </label>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-danger">Delete Folder</button>
+                </div>
+            </div>
+        </form>
+
+        <form action="{{ url_for('upload_file', bucket_name=bucket_name) }}" method="post" enctype="multipart/form-data" class="mb-4">
+    <div class="input-group">
+        <div class="custom-file">
+            <input type="file" name="file" class="custom-file-input" id="input-group" required>
+            <label class="custom-file-label" for="input-group" data-browse="Choose file">Choose file</label>
+        </div>
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Upload File</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    // Update file input label text when a file is selected
+    document.getElementById('input-group').addEventListener('change', function (e) {
+        var fileName = e.target.files[0].name;
+        var label = document.querySelector('.custom-file-label');
+        label.innerText = fileName;
+    });
+</script>
+
+
+
         <ul class="list-group">
             {% for object in objects %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ object }}
-                    <div>
-                        <a href="/delete_file/{{ bucket_name }}/{{ object }}" class="btn btn-danger btn-sm mr-2">Delete</a>
-                        <a href="/copy_file/{{ bucket_name }}/{{ object }}/copy_of_{{ object }}" class="btn btn-secondary btn-sm mr-2">Copy</a>
-                        <a href="/move_file/{{ bucket_name }}/{{ object }}/moved_{{ object }}" class="btn btn-secondary btn-sm">Move</a>
-                    </div>
+                <li class="list-group-item">
+                    {% if '/' in object %}
+                        {{ object.split('/')[0] }}
+                    {% else %}
+                        {{ object }}
+                        <div class="btn-group">
+                            <a href="{{ url_for('delete_file', bucket_name=bucket_name, file_name=object) }}" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="{{ url_for('copy_file', bucket_name=bucket_name, source=object, destination='copy_of_' + object) }}" class="btn btn-secondary btn-sm">Copy</a>
+                            <a href="{{ url_for('move_file', bucket_name=bucket_name, source=object, destination='moved_' + object) }}" class="btn btn-secondary btn-sm">Move</a>
+                        </div>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
+
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Buckets</a>
+        </div>
     </div>
 </body>
 </html>
