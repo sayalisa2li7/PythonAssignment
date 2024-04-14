@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 
+#Loading Enviornment Variables
 load_dotenv()
 
+#Creates a Flask application instance. __name__
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Set a secret key for flash messages
 
