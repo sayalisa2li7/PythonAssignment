@@ -3,37 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S3 File Manager</title>
+    <title>Buckets</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">S3 Buckets</h1>
+        <h1 class="mb-4">Buckets</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <form action="/create_bucket" method="post" class="mb-4">
             <div class="input-group">
-                <label>
-                    <input type="text" name="bucket_name" class="form-control" placeholder="Enter bucket name">
-                </label>
+                <div class="custom-file">
+                    <input type="text" name="bucket_name" class="form-control" placeholder="Enter bucket name" required>
+                </div>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-primary">Create Bucket</button>
                 </div>
             </div>
         </form>
-        <ul class="list-group">
-            {% for bucket in buckets %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ bucket }}
-                    <div>
-                        <form action="/delete_bucket" method="post" class="d-inline">
-                            <input type="hidden" name="bucket_name" value="{{ bucket }}">
-                            <button type="submit" class="btn btn-danger btn-sm mr-2">Delete</button>
-                        </form>
-                        <a href="/list_objects/{{ bucket }}" class="btn btn-primary btn-sm">View Objects</a>
+
+        {% for bucket in buckets %}
+            <form action="{{ url_for('delete_bucket') }}" method="post">
+                <div class="input-group">
+                    <select name="bucket_name" class="custom-select" required>
+                        <option value="{{ bucket }}">{{ bucket }}</option>
+                    </select>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-danger">Delete Bucket</button>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
+                </div>
+            </form>
+
+            <form action="{{ url_for('list_objects', bucket_name=bucket) }}" method="get">
+                <div class="input-group mt-2">
+                    <button type="submit" class="btn btn-success">View Objects</button>
+                </div>
+            </form>
+        {% endfor %}
     </div>
 </body>
 </html>
